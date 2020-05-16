@@ -5,6 +5,7 @@ import { EnabledNewsProviders } from "./providers/EnabledNewsProviders"
 import { DataModule } from "../data/DataModule"
 import { ScrapeService } from "./scrape/ScrapeService"
 import { MarkovService } from "./scrape/MarkovService"
+import { NewsService } from "./NewsService"
 
 @Module({
     imports: [
@@ -15,12 +16,14 @@ import { MarkovService } from "./scrape/MarkovService"
         NewsProviderService,
         ScrapeService,
         MarkovService,
+        NewsService,
         ...EnabledNewsProviders,
     ],
     exports: [
         NewsProviderService,
         ScrapeService,
         MarkovService,
+        NewsService,
     ],
 })
 export class NewsModule {}
