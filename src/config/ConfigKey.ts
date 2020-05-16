@@ -1,4 +1,5 @@
 export const enum ConfigKey {
     PORT = "PORT",
     FIRESTORE_AUTH = "FIRESTORE_AUTH",
+    SOCIAL_FACEBOOK_WEBHOOK_URL = "SOCIAL_FACEBOOK_WEBHOOK_URL",
 }

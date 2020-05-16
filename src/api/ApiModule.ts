@@ -5,6 +5,7 @@ import { NewsController } from "./NewsController"
 import { NewsModule } from "../news/NewsModule"
 import { ScraperController } from "./ScraperController"
 import { DataModule } from "../data/DataModule"
+import { SocialController } from "./SocialController"
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { DataModule } from "../data/DataModule"
         IndexController,
         NewsController,
         ScraperController,
+        SocialController,
     ],
 })
 export class ApiModule {}
