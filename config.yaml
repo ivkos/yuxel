@@ -1,0 +1,11 @@
+# This file contains configuration properties
+#  that can be overridden by environment variables.
+
+# Which HTTP port the server should listen on
+PORT: 8000
+
+# Accepts either:
+#  (string) "./serviceAccountKey.json" - using the private key in the path
+#  (string) "serverless"               - for running in Google Cloud Functions
+#  (string) "default"                  - using Google Application Default Credentials
+FIRESTORE_AUTH: "./serviceAccountKey.json"
