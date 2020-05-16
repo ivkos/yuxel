@@ -8,4 +8,4 @@ PORT: 8000
 #  (string) "./serviceAccountKey.json" - using the private key in the path
 #  (string) "serverless"               - for running in Google Cloud Functions
 #  (string) "default"                  - using Google Application Default Credentials
-FIRESTORE_AUTH: "./serviceAccountKey.json"
+FIRESTORE_AUTH: "default"
