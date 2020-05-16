@@ -1,11 +1,11 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/${PROJECT_ID}/${_NAME}', '.']
+    args: ['build', '-t', 'gcr.io/${PROJECT_ID}/${_NAME}:${COMMIT_SHA}', '.']
 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/${PROJECT_ID}/${_NAME}']
+    args: ['push', 'gcr.io/${PROJECT_ID}/${_NAME}:${COMMIT_SHA}']
 
   # Deploy container image to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -13,10 +13,10 @@ steps:
     - run
     - deploy
     - ${_NAME}
-    - --image gcr.io/${PROJECT_ID}/${_NAME}
-    - --platform managed
-    - --port 8000
-    - --region ${_REGION}
+    - --image=gcr.io/${PROJECT_ID}/${_NAME}:${COMMIT_SHA}
+    - --platform=managed
+    - --port=8000
+    - --region=${_REGION}
     - --allow-unauthenticated
 images:
-  - gcr.io/${PROJECT_ID}/${_NAME}
+  - gcr.io/${PROJECT_ID}/${_NAME}:${COMMIT_SHA}
