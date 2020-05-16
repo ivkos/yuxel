@@ -2,7 +2,7 @@ FROM node:12.16-slim as builder
 COPY package.json /app/
 COPY package-lock.json /app/
 WORKDIR /app
-RUN npm install --verbose
+RUN npm install
 COPY ./* /app/
 RUN npm run build
 
