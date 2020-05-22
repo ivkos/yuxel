@@ -17,7 +17,7 @@ export class Firestore implements OnModuleInit {
     }
 
     private async getFirestoreApp() {
-        const fireStoreAuth = this.config.get(ConfigKey.FIRESTORE_AUTH)
+        const fireStoreAuth = this.config.get(ConfigKey.GCP_FIRESTORE_AUTH)
 
         switch (fireStoreAuth) {
             case "default": {

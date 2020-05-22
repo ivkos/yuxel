@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common"
-import { Firestore } from "../../data/Firestore"
 import { News } from "../News"
 import * as _ from "lodash"
 import { NewsProvider } from "../providers/NewsProvider"
+import { GoogleCloudStorage } from "../../data/GoogleCloudStorage"
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Markovski = require("markovski")
@@ -12,11 +12,9 @@ type ModelType = "title" | "summary"
 @Injectable()
 export class MarkovService {
 
-    constructor(readonly store: Firestore) {}
+    constructor(private readonly storage: GoogleCloudStorage) {}
 
     async updateMarkovCache(news: News[]) {
-        const col = this.store.get().collection("yuxel-cache-markovski")
-
         const globalTitle = await this.getBundle("title")
         const globalSummary = await this.getBundle("summary")
 
@@ -33,26 +31,32 @@ export class MarkovService {
                 globalSummary.markovski.train(n.summary)
             }
 
-            await title.docRef.set({ model: title.markovski.getModel() })
-            await summary.docRef.set({ model: summary.markovski.getModel() })
+            await title.fileRef.save(JSON.stringify(title.markovski.getModel()))
+            await summary.fileRef.save(JSON.stringify(summary.markovski.getModel()))
         }
 
-        await globalTitle.docRef.set({ model: globalTitle.markovski.getModel() })
-        await globalSummary.docRef.set({ model: globalSummary.markovski.getModel() })
+        await globalTitle.fileRef.save(JSON.stringify(globalTitle.markovski.getModel()))
+        await globalSummary.fileRef.save(JSON.stringify(globalSummary.markovski.getModel()))
     }
 
     async getBundle(modelType: ModelType, providerId: NewsProvider["id"] = undefined) {
-        const col = this.store.get().collection("yuxel-cache-markovski")
-
         let documentName = ""
         if (providerId !== undefined) {
             documentName += `${providerId}-`
         }
         documentName += modelType
 
-        const docRef = col.doc(documentName)
-        const docSnapshot = await docRef.get()
-        const model = docSnapshot.data()?.model
+        const fileRef = this.storage.get()
+            .bucket("yuxel")
+            .file(`cache-markovski/${documentName}.json`)
+
+        let model
+
+        const [exists] = await fileRef.exists()
+        if (exists) {
+            const [buf] = await fileRef.download()
+            model = JSON.parse(buf.toString("utf-8"))
+        }
 
         let markovski
         switch (modelType) {
@@ -67,7 +71,7 @@ export class MarkovService {
         }
 
         return {
-            docRef: docRef,
+            fileRef: fileRef,
             model: model,
             markovski: markovski,
         }

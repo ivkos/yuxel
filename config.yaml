@@ -8,6 +8,11 @@ PORT: 8000
 #  (string) "./serviceAccountKey.json" - using the private key in the path
 #  (string) "serverless"               - for running in Google Cloud Functions
 #  (string) "default"                  - using Google Application Default Credentials
-FIRESTORE_AUTH: "default"
+GCP_FIRESTORE_AUTH: "default"
+
+# Accepts either:
+#  (string) "./serviceAccountKey.json" - using the private key in the path
+#  (string) "default"                  - using Google Application Default Credentials
+GCP_STORAGE_AUTH: "default"
 
 SOCIAL_FACEBOOK_WEBHOOK_URL: https://hooks.zapier.com/hooks/catch/SOME_ID/SOME_SECRET/

@@ -34,6 +34,7 @@
     },
     "homepage": "https://github.com/ivkos/yuxel#readme",
     "dependencies": {
+        "@google-cloud/storage": "^5.0.1",
         "@nestjs/common": "^6.10.14",
         "@nestjs/core": "^6.10.14",
         "@nestjs/platform-express": "^6.10.14",
