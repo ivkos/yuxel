@@ -11,6 +11,7 @@ type ModelType = "title" | "summary"
 
 @Injectable()
 export class MarkovService {
+    private modelCache: { [key: string]: { model: object, modelUpdatedAt: Date } } = {}
 
     constructor(private readonly storage: GoogleCloudStorage) {}
 
@@ -34,11 +35,17 @@ export class MarkovService {
             }
 
             await title.fileRef.save(JSON.stringify(title.markovski.getModel()))
+            await title.cache(title.markovski.getModel(), new Date())
+
             await summary.fileRef.save(JSON.stringify(summary.markovski.getModel()))
+            await summary.cache(summary.markovski.getModel(), new Date())
         }
 
         await globalTitle.fileRef.save(JSON.stringify(globalTitle.markovski.getModel()))
+        globalTitle.cache(globalTitle.markovski.getModel(), new Date())
+
         await globalSummary.fileRef.save(JSON.stringify(globalSummary.markovski.getModel()))
+        globalSummary.cache(globalSummary.markovski.getModel(), new Date())
     }
 
     async getBundle(modelType: ModelType, providerId: NewsProvider["id"] = undefined) {
@@ -53,11 +60,21 @@ export class MarkovService {
             .file(`cache-markovski/${documentName}.json`)
 
         let model
+        let modelUpdatedAt
 
         const [exists] = await fileRef.exists()
         if (exists) {
-            const [buf] = await fileRef.download()
-            model = JSON.parse(buf.toString("utf-8"))
+            modelUpdatedAt = new Date(fileRef.metadata.updated)
+
+            const cachedModel = this.modelCache[documentName]
+            if (!cachedModel || cachedModel.modelUpdatedAt < modelUpdatedAt) {
+                const [buf] = await fileRef.download()
+                model = JSON.parse(buf.toString("utf-8"))
+
+                this.modelCache[documentName] = { model: model, modelUpdatedAt: modelUpdatedAt }
+            } else {
+                model = cachedModel.model
+            }
         }
 
         let markovski
@@ -75,6 +92,13 @@ export class MarkovService {
         return {
             fileRef: fileRef,
             model: model,
+            modelUpdatedAt: modelUpdatedAt,
+            cache: (model: object, modelUpdatedAt: Date) => {
+                this.modelCache[documentName] = {
+                    model: model,
+                    modelUpdatedAt: modelUpdatedAt,
+                }
+            },
             markovski: markovski,
         }
     }
