@@ -15,4 +15,5 @@ GCP_FIRESTORE_AUTH: "default"
 #  (string) "default"                  - using Google Application Default Credentials
 GCP_STORAGE_AUTH: "default"
 
-SOCIAL_FACEBOOK_WEBHOOK_URL: https://hooks.zapier.com/hooks/catch/SOME_ID/SOME_SECRET/
+SOCIAL_FACEBOOK_PAGE_ID: PAGE_ID_GOES_HERE
+SOCIAL_FACEBOOK_PAGE_ACCESS_TOKEN: PAGE_TOKEN_GOES_HERE

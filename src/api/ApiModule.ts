@@ -6,12 +6,14 @@ import { NewsModule } from "../news/NewsModule"
 import { ScraperController } from "./ScraperController"
 import { DataModule } from "../data/DataModule"
 import { SocialController } from "./SocialController"
+import { SocialModule } from "../social/SocialModule"
 
 @Module({
     imports: [
         ConfigurationModule,
         NewsModule,
         DataModule,
+        SocialModule,
     ],
     providers: [],
     controllers: [
