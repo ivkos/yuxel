@@ -11,7 +11,7 @@ export class NewsService {
 
     async getNews(): Promise<GeneratedNews> {
         const titleBundle = await this.markovService.getBundle("title")
-        const summaryBundle = await this.markovService.getBundle("title")
+        const summaryBundle = await this.markovService.getBundle("summary")
 
         return {
             title: titleBundle.markovski.generate().toUpperCase(),
@@ -23,7 +23,7 @@ export class NewsService {
         const provider = await this.newsProviderService.findById(providerId)
 
         const titleBundle = await this.markovService.getBundle("title", provider.id)
-        const summaryBundle = await this.markovService.getBundle("title", provider.id)
+        const summaryBundle = await this.markovService.getBundle("summary", provider.id)
 
         return {
             title: titleBundle.markovski.generate().toUpperCase(),
