@@ -16,10 +16,12 @@ export class ScrapeService {
 
     async scrapeSingleProvider(newsProviderId: NewsProvider["id"]) {
         const provider = await this.providerService.findById(newsProviderId)
-        const news = await provider.getNews()
+        const existingNewsIds = await this.getExistingNewsIds()
+        const news = await provider.getNews(existingNewsIds)
+        const filteredNews = news.filter(n => !existingNewsIds.includes(News.getGlobalId(n)))
 
         this.logger.log(`Adding ${news.length} news from '${provider.id}' to Firestore...`)
-        await this.batchWriteNews(news)
+        await this.batchWriteNews(filteredNews)
         this.logger.log(`Successfully added '${provider.id}' news to Firestore`)
 
         this.logger.log(`Updating Markov cache...`)
@@ -28,6 +30,8 @@ export class ScrapeService {
     }
 
     private async batchWriteNews(news: News[]) {
+        if (news.length === 0) return
+
         const db = this.store.get()
         const col = db.collection("yuxel-news")
 
@@ -42,5 +46,13 @@ export class ScrapeService {
 
             await batch.commit()
         }
+    }
+
+    private async getExistingNewsIds(): Promise<News["id"][]> {
+        const col = this.store.get().collection("yuxel-news")
+
+        const existingDocRefs = await col.listDocuments()
+
+        return existingDocRefs.map(d => d.id)
     }
 }

@@ -11,16 +11,23 @@ export class DnevnikNewsProvider implements NewsProvider {
 
     readonly id: string = "dnevnik.bg"
 
-    async getNews(): Promise<News[]> {
+    async getNews(existingNewsIds: News["id"][]): Promise<News[]> {
         const news = []
 
         for (let offset = 0; offset < DnevnikNewsProvider.HARD_LIMIT;) {
             try {
                 const result = await this.fetchNews(offset)
                 offset += result.length
-                news.push(...result)
 
-                this.logger.verbose(`Got ${result.length} news`)
+                const filteredResult = result.filter(n => !existingNewsIds.includes(News.getGlobalId(n)))
+                news.push(...filteredResult)
+
+                this.logger.verbose(`Got a total of ${result.length} news, used ${filteredResult.length} news after filtering`)
+
+                if (filteredResult.length < result.length) {
+                    this.logger.log("Reached news we have already seen, aborting further scraping")
+                    break
+                }
             } catch (err) {
                 this.logger.warn("Failed to fetch news")
                 this.logger.warn(err)
@@ -32,7 +39,7 @@ export class DnevnikNewsProvider implements NewsProvider {
         return news
     }
 
-    private async fetchNews(offset = 0) {
+    private async fetchNews(offset = 0): Promise<News[]> {
         let response
         try {
             response = await axios.get(

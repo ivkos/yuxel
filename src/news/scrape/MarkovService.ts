@@ -15,6 +15,8 @@ export class MarkovService {
     constructor(private readonly storage: GoogleCloudStorage) {}
 
     async updateMarkovCache(news: News[]) {
+        if (news.length === 0) return
+
         const globalTitle = await this.getBundle("title")
         const globalSummary = await this.getBundle("summary")
 
