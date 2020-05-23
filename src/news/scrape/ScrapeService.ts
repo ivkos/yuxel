@@ -2,9 +2,9 @@ import { NewsProviderService } from "../providers/NewsProviderService"
 import { Injectable, Logger } from "@nestjs/common"
 import { NewsProvider } from "../providers/NewsProvider"
 import { News } from "../News"
-import { Firestore } from "../../data/Firestore"
 import * as _ from "lodash"
 import { MarkovService } from "./MarkovService"
+import { Firestore } from "@google-cloud/firestore"
 
 @Injectable()
 export class ScrapeService {
@@ -12,7 +12,7 @@ export class ScrapeService {
 
     constructor(private readonly providerService: NewsProviderService,
                 private readonly markovService: MarkovService,
-                private readonly store: Firestore) {}
+                private readonly firestore: Firestore) {}
 
     async scrapeSingleProvider(newsProviderId: NewsProvider["id"]) {
         const provider = await this.providerService.findById(newsProviderId)
@@ -32,7 +32,7 @@ export class ScrapeService {
     private async batchWriteNews(news: News[]) {
         if (news.length === 0) return
 
-        const db = this.store.get()
+        const db = this.firestore
         const col = db.collection("yuxel-news")
 
         // Firestore allows up to 500 docs per batch
@@ -49,7 +49,7 @@ export class ScrapeService {
     }
 
     private async getExistingNewsIds(): Promise<News["id"][]> {
-        const col = this.store.get().collection("yuxel-news")
+        const col = this.firestore.collection("yuxel-news")
 
         const existingDocRefs = await col.listDocuments()
 

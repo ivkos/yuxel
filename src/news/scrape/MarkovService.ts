@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { News } from "../News"
 import * as _ from "lodash"
 import { NewsProvider } from "../providers/NewsProvider"
-import { GoogleCloudStorage } from "../../data/GoogleCloudStorage"
+import { Storage } from "@google-cloud/storage"
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Markovski = require("markovski")
@@ -13,7 +13,7 @@ type ModelType = "title" | "summary"
 export class MarkovService {
     private modelCache: { [key: string]: { model: object, modelUpdatedAt: Date } } = {}
 
-    constructor(private readonly storage: GoogleCloudStorage) {}
+    constructor(private readonly storage: Storage) {}
 
     async updateMarkovCache(news: News[]) {
         if (news.length === 0) return
@@ -55,7 +55,7 @@ export class MarkovService {
         }
         documentName += modelType
 
-        const fileRef = this.storage.get()
+        const fileRef = this.storage
             .bucket("yuxel")
             .file(`cache-markovski/${documentName}.json`)
 

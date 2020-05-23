@@ -1,19 +1,15 @@
 import { Module } from "@nestjs/common"
-import { Firestore } from "./Firestore"
-import { ConfigurationModule } from "../config/ConfigurationModule"
-import { GoogleCloudStorage } from "./GoogleCloudStorage"
+import { FirestoreModule } from "./FirestoreModule"
+import { GoogleCloudStorageModule } from "./GoogleCloudStorageModule"
 
 @Module({
     imports: [
-        ConfigurationModule,
-    ],
-    providers: [
-        Firestore,
-        GoogleCloudStorage,
+        FirestoreModule,
+        GoogleCloudStorageModule,
     ],
     exports: [
-        Firestore,
-        GoogleCloudStorage,
+        FirestoreModule,
+        GoogleCloudStorageModule,
     ],
 })
 export class DataModule {}
