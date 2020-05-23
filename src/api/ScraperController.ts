@@ -15,8 +15,13 @@ export class ScraperController {
         return (await this.providerService.findAll()).map(np => NewsProviderDto.from(np))
     }
 
+    @Post("/providers/all/scrape")
+    async scapeAllProviders() {
+        return this.scrapeService.scrapeAllProviders()
+    }
+
     @Post("/providers/:id/scrape")
-    async doScrape(@Param("id") newsProviderId: string) {
+    async scrapeSingleProvider(@Param("id") newsProviderId: string) {
         return this.scrapeService.scrapeSingleProvider(newsProviderId)
     }
 }

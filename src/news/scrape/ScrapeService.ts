@@ -14,6 +14,20 @@ export class ScrapeService {
                 private readonly markovService: MarkovService,
                 private readonly firestore: Firestore) {}
 
+
+    async scrapeAllProviders() {
+        const providers = await this.providerService.findAll()
+
+        await Promise.all(providers.map(provider => (async () => {
+            try {
+                await this.scrapeSingleProvider(provider.id)
+            } catch (err) {
+                this.logger.error(`Scraping of '${provider.id}' failed`)
+                console.error(err)
+            }
+        })()))
+    }
+
     async scrapeSingleProvider(newsProviderId: NewsProvider["id"]) {
         const provider = await this.providerService.findById(newsProviderId)
         const existingNewsIds = await this.getExistingNewsIds()
