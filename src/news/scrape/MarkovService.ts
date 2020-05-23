@@ -3,6 +3,7 @@ import { News } from "../News"
 import * as _ from "lodash"
 import { NewsProvider } from "../providers/NewsProvider"
 import { Storage } from "@google-cloud/storage"
+import { Configuration } from "../../config/Configuration"
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Markovski = require("markovski")
@@ -11,9 +12,11 @@ type ModelType = "title" | "summary"
 
 @Injectable()
 export class MarkovService {
+    private static readonly CACHE_DIRECTORY = "cache-markovski"
     private modelCache: { [key: string]: { model: object, modelUpdatedAt: Date } } = {}
 
-    constructor(private readonly storage: Storage) {}
+    constructor(private readonly storage: Storage,
+                private readonly config: Configuration) {}
 
     async updateMarkovCache(news: News[]) {
         if (news.length === 0) return
@@ -56,8 +59,8 @@ export class MarkovService {
         documentName += modelType
 
         const fileRef = this.storage
-            .bucket("yuxel")
-            .file(`cache-markovski/${documentName}.json`)
+            .bucket(this.config.get("DATA_STORAGE_CONTAINER"))
+            .file(`${MarkovService.CACHE_DIRECTORY}/${documentName}.json`)
 
         let model
         let modelUpdatedAt
@@ -104,7 +107,10 @@ export class MarkovService {
     }
 
     async dropCache() {
-        await this.storage.bucket("yuxel").deleteFiles({ directory: "cache-markovski" })
+        await this.storage
+            .bucket(this.config.get("DATA_STORAGE_CONTAINER"))
+            .deleteFiles({ directory: MarkovService.CACHE_DIRECTORY })
+
         this.modelCache = {}
     }
 

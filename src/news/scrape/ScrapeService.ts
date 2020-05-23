@@ -5,6 +5,7 @@ import { News } from "../News"
 import * as _ from "lodash"
 import { MarkovService } from "./MarkovService"
 import { Firestore } from "@google-cloud/firestore"
+import { Configuration } from "../../config/Configuration"
 
 @Injectable()
 export class ScrapeService {
@@ -12,7 +13,8 @@ export class ScrapeService {
 
     constructor(private readonly providerService: NewsProviderService,
                 private readonly markovService: MarkovService,
-                private readonly firestore: Firestore) {}
+                private readonly firestore: Firestore,
+                private readonly config: Configuration) {}
 
 
     async scrapeAllProviders() {
@@ -48,7 +50,7 @@ export class ScrapeService {
         await this.markovService.dropCache()
 
         this.logger.verbose("Getting stored news...")
-        const docs = await this.firestore.collection("yuxel-news").listDocuments()
+        const docs = await this.firestore.collection(this.config.get("DATA_COLLECTION_NEWS")).listDocuments()
         const news = await Promise.all(docs.map(async docRef => ((await docRef.get()).data() as News)))
 
         this.logger.verbose("Rebuilding Markov cache...")
@@ -60,7 +62,7 @@ export class ScrapeService {
         if (news.length === 0) return
 
         const db = this.firestore
-        const col = db.collection("yuxel-news")
+        const col = db.collection(this.config.get("DATA_COLLECTION_NEWS"))
 
         // Firestore allows up to 500 docs per batch
         const newsChunks = _.chunk(news, 500)
@@ -76,7 +78,7 @@ export class ScrapeService {
     }
 
     private async getExistingNewsIds(): Promise<News["id"][]> {
-        const col = this.firestore.collection("yuxel-news")
+        const col = this.firestore.collection(this.config.get("DATA_COLLECTION_NEWS"))
 
         const existingDocRefs = await col.listDocuments()
 
