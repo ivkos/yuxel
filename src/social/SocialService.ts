@@ -9,7 +9,9 @@ export class SocialService {
     constructor(private readonly config: Configuration) {}
 
     async postToFacebook(news: GeneratedNews) {
-        const content = `🔸 ${news.title}`
+        const content = `🔔 ${news.title}\n\n` +
+            `ℹ ${news.summary}\n\n` +
+            "🕘 Очаквайте подробности в емисията ни след 1 час."
 
         await this.publishPostOnFacebookPage(content)
     }

@@ -3,6 +3,7 @@ import { NewsProviderService } from "./providers/NewsProviderService"
 import { MarkovService } from "./scrape/MarkovService"
 import { GeneratedNews } from "../api/dto/GeneratedNews"
 import { NewsProvider } from "./providers/NewsProvider"
+import * as _ from "lodash"
 
 @Injectable()
 export class NewsService {
@@ -14,8 +15,8 @@ export class NewsService {
         const summaryBundle = await this.markovService.getBundle("summary")
 
         return {
-            title: titleBundle.markovski.generate().toUpperCase(),
-            summary: summaryBundle.markovski.generate().toUpperCase(),
+            title: _.upperFirst(titleBundle.markovski.generate()),
+            summary: _.upperFirst(summaryBundle.markovski.generate()),
         }
     }
 
