@@ -24,4 +24,9 @@ export class ScraperController {
     async scrapeSingleProvider(@Param("id") newsProviderId: string) {
         return this.scrapeService.scrapeSingleProvider(newsProviderId)
     }
+
+    @Post("/markov/rebuild")
+    async rebuildMarkov() {
+        return this.scrapeService.rebuildMarkovModels()
+    }
 }

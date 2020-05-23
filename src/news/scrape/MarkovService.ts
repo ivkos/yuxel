@@ -103,10 +103,14 @@ export class MarkovService {
         }
     }
 
+    async dropCache() {
+        await this.storage.bucket("yuxel").deleteFiles({ directory: "cache-markovski" })
+        this.modelCache = {}
+    }
+
     createForTitle(model: object = undefined) {
         return this.createMarkovski(15, model)
     }
-
 
     createForSummary(model: object = undefined) {
         return this.createMarkovski(25, model)

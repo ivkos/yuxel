@@ -43,6 +43,19 @@ export class ScrapeService {
         this.logger.log(`Successfully updated Markov cache`)
     }
 
+    async rebuildMarkovModels() {
+        this.logger.verbose("Dropping Markov cache...")
+        await this.markovService.dropCache()
+
+        this.logger.verbose("Getting stored news...")
+        const docs = await this.firestore.collection("yuxel-news").listDocuments()
+        const news = await Promise.all(docs.map(async docRef => ((await docRef.get()).data() as News)))
+
+        this.logger.verbose("Rebuilding Markov cache...")
+        await this.markovService.updateMarkovCache(news)
+        this.logger.verbose("Successfully rebuilt Markov cache")
+    }
+
     private async batchWriteNews(news: News[]) {
         if (news.length === 0) return
 
