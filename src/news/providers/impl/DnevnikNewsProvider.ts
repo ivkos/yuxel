@@ -6,7 +6,7 @@ import { Injectable, Logger } from "@nestjs/common"
 
 @Injectable()
 export class DnevnikNewsProvider implements NewsProvider {
-    private static readonly HARD_LIMIT = 1500
+    private static readonly HARD_LIMIT = 10000
     private readonly logger = new Logger(DnevnikNewsProvider.name)
 
     readonly id: string = "dnevnik.bg"
@@ -47,7 +47,9 @@ export class DnevnikNewsProvider implements NewsProvider {
                 {
                     headers: {
                         "X-Requested-With": "XMLHttpRequest",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36",
                     },
+
                 })
         } catch (err) {
             this.logger.error("Failed to fetch response")
