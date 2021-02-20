@@ -38,7 +38,7 @@
         "@nestjs/common": "^6.10.14",
         "@nestjs/core": "^6.10.14",
         "@nestjs/platform-express": "^6.10.14",
-        "axios": "^0.19.2",
+        "axios": "^0.21.1",
         "cheerio": "^1.0.0-rc.3",
         "firebase-admin": "^8.12.1",
         "lodash": "^4.17.15",
