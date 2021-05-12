@@ -41,7 +41,7 @@
         "axios": "^0.19.2",
         "cheerio": "^1.0.0-rc.3",
         "firebase-admin": "^8.12.1",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.21",
         "luxon": "^1.24.1",
         "markovski": "^1.5.2",
         "nconf": "^0.10.0",
